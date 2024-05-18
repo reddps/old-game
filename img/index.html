@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="pt_br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link
+    href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="/Style/Style.css" />
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+  
+  .produto img {
+    width: 100%;
+    height: 200px; /* Defina a altura desejada para as imagens */
+    object-fit: cover; /* Para manter a proporção da imagem */
+  }
+
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+    }
+   /* .container {
+      padding: 1rem;
+      position: sticky;
+      top: 0;
+      border-bottom: 10px solid rgb(111, 61, 122);
+    }*/
+    .container > div {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: large;
+      color: blueviolet;
+    }
+    .Lo_1 {
+      font-size: 160%;
+    }
+    .Lo_1 span {
+      color: blueviolet;
+    }
+    .sacola {
+      font-size: 180%;
+    }
+    .pesquisa input {
+      margin-left: 45%;
+      font-size: 80%;
+      width: 300px;
+      /* Define a largura do campo de entrada como 300 pixels */
+    }
+    .form-container {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+      padding-top: 60px;
+    }
+    .form-content {
+      background-color: #fefefe;
+      margin: 5% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 50%; /* Alterado para centralizar */
+      text-align: center; /* Adicionado para centralizar */
+      border-radius: 10px; /* Adicionado para arredondar as bordas */
+    }
+    .form-content input[type="text"],
+    .form-content input[type="email"],
+    .form-content input[type="password"],
+    .form-content textarea {
+      border: 1px solid purple; /* Cor da borda */
+      border-radius: 5px; /* Bordas arredondadas */
+      padding: 8px; /* Espaçamento interno */
+      margin: 5px; /* Espaçamento externo */
+      color: purple; /* Cor do texto */
+    }
+    .form-content input[type="file"] {
+      margin-top: 10px;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .produtos {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .produto {
+      border: 1px solid #ccc;
+      margin: 10px;
+      padding: 10px;
+      width: 200px;
+      text-align: center;
+      cursor: pointer;
+      border-radius: 5px; /* Adicionado para arredondar as bordas */
+      transition: background-color 0.3s; /* Adicionado para suavizar a transição de cor */
+    }
+    .produto:hover {
+      background-color: rgb(216, 167, 216); /* Alterado para cor rosa */
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgb(0,0,0);
+      background-color: rgba(0,0,0,0.4);
+      padding-top: 60px;
+    }
+    .modal-content {
+      background-color: #fefefe;
+      margin: 5% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      border-radius: 10px; /* Adicionado para arredondar as bordas */
+    }
+    input[type="submit"] {
+      background-color: blueviolet;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    input[type="submit"]:hover {
+      background-color: darkviolet;
+    }
+    .sacola-vazia {
+      font-style: italic;
+      color: #888;
+      text-align: center;
+    }
+    #sacola {
+      border: 1px solid #888;
+      padding: 10px;
+      border-radius: 10px; /* Adicionado para arredondar as bordas */
+    }
+    .produto-carrinho {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 5px;
+      padding: 5px;
+      border: 1px solid #ccc;
+    }
+    .produto-carrinho > span {
+      margin-right: 5px;
+    }
+    .quantidade-produto {
+      display: flex;
+      align-items: center;
+    }
+    .quantidade-produto button {
+      background-color: blueviolet;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 25px;
+      height: 25px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 0 5px;
+    }
+    .total-carrinho {
+      margin-top: 10px;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="cab">
+      <div class="Lo_1">
+        <i class='bx bxs-joystick'></i> <span>OLD GAME</span>
+      </div>
+      <div class="pesquisa">
+        <input type="text" id="searchInput" onkeyup="searchProduct()" placeholder="Pesquisar...">
+      </div>
+      <div class="usuario" onclick="openForm()"><i class='bx bxs-user'></i> Entrar / Registrar</div>
+      <div class="sacola" onclick="openModal()">
+        <i class='bx bxs-cart'></i> 
+        <span id="sacola-count">0</span>
+      </div>
+    </div>
+  </div>
+  <div class="produtos">
+    <!-- Produtos adicionados -->
+    <!-- Produto 1 -->
+    <div class="produto" id="produto1" onclick="adicionarProduto('Produto 1', 10)">
+      <img src="produto1.jpg" alt="Produto 1">
+      <div class="produto-info">
+        <h3>Produto 1</h3>
+        <p>R$ 10</p>
+        <button onclick="adicionarProduto('Produto 1', 10)">Comprar</button>
+      </div>
+    </div>
+    <!-- Produto 2 -->
+    <div class="produto" id="produto2" onclick="adicionarProduto('Produto 2', 20)">
+      <img src="produto2.jpg" alt="Produto 2">
+      <div class="produto-info">
+        <h3>Produto 2</h3>
+        <p>R$ 20</p>
+        <button onclick="adicionarProduto('Produto 2', 20)">Comprar</button>
+      </div>
+    </div>
+    <!-- Adicione mais produtos conforme necessário -->
+    <!-- Produto 3 -->
+    <div class="produto" id="produto3" onclick="adicionarProduto('Produto 3', 15)">
+      <img src="produto3.jpg" alt="Produto 3">
+      <div class="produto-info">
+        <h3>Produto 3</h3>
+        <p>R$ 15</p>
+        <button onclick="adicionarProduto('Produto 3', 15)">Comprar</button>
+      </div>
+    </div>
+    <!-- Produto 4 -->
+    <div class="produto" id="produto4" onclick="adicionarProduto('Produto 4', 25)">
+      <img src="produto4.jpg" alt="Produto 4">
+      <div class="produto-info">
+        <h3>Produto 4</h3>
+        <p>R$ 25</p>
+        <button onclick="adicionarProduto('Produto 4', 25)">Comprar</button>
+      </div>
+    </div>
+    <!-- Produto 5 -->
+    <div class="produto" id="produto5" onclick="adicionarProduto('Produto 5', 18)">
+      <img src="produto5.jpg" alt="Produto 5">
+      <div class="produto-info">
+        <h3>Produto 5</h3>
+        <p>R$ 18</p>
+        <button onclick="adicionarProduto('Produto 5', 18)">Comprar</button>
+      </div>
+    </div>
+    <!-- Produto 6 -->
+    <div class="produto" id="produto6" onclick="adicionarProduto('Produto 6', 22)">
+      <img src="produto6.jpg" alt="Produto 6">
+      <div class="produto-info">
+        <h3>Produto 6</h3>
+        <p>R$ 22</p>
+        <button onclick="adicionarProduto('Produto 6', 22)">Comprar</button>
+      </div>
+    </div>
+    <!-- Produto 7 -->
+    <div class="produto" id="produto7" onclick="adicionarProduto('Produto 7', 30)">
+      <img src="produto7.jpg" alt="Produto 7">
+      <div class="produto-info">
+        <h3>Produto 7</h3>
+        <p>R$ 30</p>
+        <button onclick="adicionarProduto('Produto 7', 30)">Comprar</button>
+      </div>
+    </div>
+    <!-- Produto 8 -->
+    <div class="produto" id="produto8" onclick="adicionarProduto('Produto 8', 16)">
+      <img src="produto8.jpg" alt="Produto 8">
+      <div class="produto-info">
+        <h3>Produto 8</h3>
+        <p>R$ 16</p>
+        <button onclick="adicionarProduto('Produto 8', 16)">Comprar</button>
+      </div>
+    </div>
+    <!-- Produto 9 -->
+    <div class="produto" id="produto9" onclick="adicionarProduto('Produto 9', 28)">
+      <img src="produto9.jpg" alt="Produto 9">
+      <div class="produto-info">
+        <h3>Produto 9</h3>
+        <p>R$ 28</p>
+        <button onclick="adicionarProduto('Produto 9', 28)">Comprar</button>
+      </div>
+    </div>
+    <!-- Produto 10 -->
+    <div class="produto" id="produto10" onclick="adicionarProduto('Produto 10', 35)">
+      <img src="produto10.jpg" alt="Produto 10">
+      <div class="produto-info">
+        <h3>Produto 10</h3>
+        <p>R$ 35</p>
+        <button onclick="adicionarProduto('Produto 10', 35)">Comprar</button>
+      </div>
+    </div>
+    <!-- Produto 11 -->
+    <div class="produto" id="produto11" onclick="adicionarProduto('Produto 11', 40)">
+      <img src="produto11.jpg" alt="Produto 11">
+      <div class="produto-info">
+        <h3>Produto 11</h3>
+        <p>R$ 40</p>
+        <button onclick="adicionarProduto('Produto 11', 40)">Comprar</button>
+      </div>
+    </div>
+    <!-- Produto 12 -->
+    <div class="produto" id="produto12" onclick="adicionarProduto('Produto 12', 18)">
+      <img src="produto12.jpg" alt="Produto 12">
+      <div class="produto-info">
+        <h3>Produto 12</h3>
+        <p>R$ 18</p>
+        <button onclick="adicionarProduto('Produto 12', 18)">Comprar</button>
+      </div>
+    </div>
+    <!-- Produto 13 -->
+    <div class="produto" id="produto13" onclick="adicionarProduto('Produto 13', 20)">
+      <img src="produto13.jpg" alt="Produto 13">
+      <div class="produto-info">
+        <h3>Produto 13</h3>
+        <p>R$ 20</p>
+        <button onclick="adicionarProduto('Produto 13', 20)">Comprar</button>
+      </div>
+    </div>
+    <!-- Produto 14 -->
+    <div class="produto" id="produto14" onclick="adicionarProduto('Produto 14', 25)">
+      <img src="produto14.jpg" alt="Produto 14">
+      <div class="produto-info">
+        <h3>Produto 14</h3>
+        <p>R$ 25</p>
+        <button onclick="adicionarProduto('Produto 14', 25)">Comprar</button>
+      </div>
+    </div>
+    <!-- Produto 15 -->
+    <div class="produto" id="produto15" onclick="adicionarProduto('Produto 15', 30)">
+      <img src="produto15.jpg" alt="Produto 15">
+      <div class="produto-info">
+        <h3>Produto 15</h3>
+        <p>R$ 30</p>
+        <button onclick="adicionarProduto('Produto 15', 30)">Comprar</button>
+      </div>
+    </div>
+    <!-- Produto 16 -->
+    <div class="produto" id="produto16" onclick="adicionarProduto('Produto 16', 16)">
+      <img src="produto16.jpg" alt="Produto 16">
+      <div class="produto-info">
+        <h3>Produto 16</h3>
+        <p>R$ 16</p>
+        <button onclick="adicionarProduto('Produto 16', 16)">Comprar</button>
+      </div>
+    </div>
+    <!-- Produto 17 -->
+    <div class="produto" id="produto17" onclick="adicionarProduto('Produto 17', 22)">
+      <img src="produto17.jpg" alt="Produto 17">
+      <div class="produto-info">
+        <h3>Produto 17</h3>
+        <p>R$ 22</p>
+        <button onclick="adicionarProduto('Produto 17', 22)">Comprar</button>
+      </div>
+    </div>
+    <!-- Produto 18 -->
+    <div class="produto" id="produto18" onclick="adicionarProduto('Produto 18', 24)">
+      <img src="produto18.jpg" alt="Produto 18">
+      <div class="produto-info">
+        <h3>Produto 18</h3>
+        <p>R$ 24</p>
+        <button onclick="adicionarProduto('Produto 18', 24)">Comprar</button>
+      </div>
+    </div>
+    <!-- Produto 19 -->
+    <div class="produto" id="produto19" onclick="adicionarProduto('Produto 19', 28)">
+      <img src="produto19.jpg" alt="Produto 19">
+      <div class="produto-info">
+        <h3>Produto 19</h3>
+        <p>R$ 28</p>
+        <button onclick="adicionarProduto('Produto 19', 28)">Comprar</button>
+      </div>
+    </div>
+    <!-- Produto 20 -->
+    <div class="produto" id="produto20" onclick="adicionarProduto('Produto 20', 32)">
+      <img src="produto20.jpg" alt="Produto 20">
+      <div class="produto-info">
+        <h3>Produto 20</h3>
+        <p>R$ 32</p>
+        <button onclick="adicionarProduto('Produto 20', 32)">Comprar</button>
+      </div>
+    </div>
+    <!-- Adicione mais produtos conforme necessário -->
+  </div>
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <div id="carrinho"></div>
+      <p class="sacola-vazia" id="sacola-vazia">Sua sacola está vazia.</p>
+      <p class="total-carrinho" id="total-carrinho">Total: R$0</p>
+    </div>
+  </div>
+  <div class="form-container" id="formContainer">
+    <div class="form-content">
+      <span class="close" onclick="closeForm()">&times;</span>
+      <form>
+        <h2>Registrar</h2>
+        <input type="text" placeholder="Nome">
+        <input type="email" placeholder="Email">
+        <input type="text" placeholder="CPF">
+        <input type="password" placeholder="Senha">
+        <input type="password" placeholder="Repita a Senha">
+        <input type="submit" value="Registrar">
+      </form>
+    </div>
+  </div>
+  <script>
+    let sacolaCount = 0;
+    let totalCarrinho = 0;
+    const produtosCarrinho = {};
+    function adicionarProduto(nomeProduto, valorProduto) {
+      if (produtosCarrinho[nomeProduto]) return; // Se o produto já estiver na sacola, não faz nada
+      
+      sacolaCount++;
+      totalCarrinho += valorProduto;
+      document.getElementById('sacola-count').innerText = sacolaCount;
+      if (produtosCarrinho[nomeProduto]) {
+        produtosCarrinho[nomeProduto].quantidade++;
+        document.getElementById(nomeProduto).innerText = `${nomeProduto} x${produtosCarrinho[nomeProduto].quantidade}`;
+      } else {
+        produtosCarrinho[nomeProduto] = { quantidade: 1, valor: valorProduto };
+        const carrinho = document.getElementById('carrinho');
+        const novoProduto = document.createElement('div');
+        novoProduto.classList.add('produto-carrinho');
+        novoProduto.setAttribute('id', nomeProduto);
+        novoProduto.innerHTML = `
+          <span>${nomeProduto} </span>
+          <div class="quantidade-produto">
+            <button onclick="diminuirQuantidade('${nomeProduto}', ${valorProduto})">-</button>
+            <span id="${nomeProduto}-quantidade">${produtosCarrinho[nomeProduto].quantidade}</span>
+            <button onclick="aumentarQuantidade('${nomeProduto}', ${valorProduto})">+</button>
+          </div>
+          <span> (R$${valorProduto})</span>
+          <button class="remover-produto" onclick="removerProduto('${nomeProduto}', ${valorProduto})">Remover</button>
+        `;
+        carrinho.appendChild(novoProduto);
+        document.getElementById('sacola-vazia').style.display = 'none';
+      }
+      document.getElementById('total-carrinho').innerText = `Total: R$${totalCarrinho}`;
+    }
+    function aumentarQuantidade(nomeProduto, valorProduto) {
+      produtosCarrinho[nomeProduto].quantidade++;
+      sacolaCount++;
+      totalCarrinho += valorProduto;
+      document.getElementById(nomeProduto + '-quantidade').innerText = produtosCarrinho[nomeProduto].quantidade;
+      document.getElementById('sacola-count').innerText = sacolaCount;
+      document.getElementById('total-carrinho').innerText = `Total: R$${totalCarrinho}`;
+    }
+    function diminuirQuantidade(nomeProduto, valorProduto) {
+      if (produtosCarrinho[nomeProduto].quantidade > 1) {
+        produtosCarrinho[nomeProduto].quantidade--;
+        sacolaCount--;
+        totalCarrinho -= valorProduto;
+        document.getElementById(nomeProduto + '-quantidade').innerText = produtosCarrinho[nomeProduto].quantidade;
+        document.getElementById('sacola-count').innerText = sacolaCount;
+        document.getElementById('total-carrinho').innerText = `Total: R$${totalCarrinho}`;
+      }
+    }
+    function removerProduto(nomeProduto, valorProduto) {
+      sacolaCount -= produtosCarrinho[nomeProduto].quantidade;
+      totalCarrinho -= produtosCarrinho[nomeProduto].quantidade * valorProduto;
+      delete produtosCarrinho[nomeProduto];
+      document.getElementById(nomeProduto).remove();
+      if (sacolaCount === 0) {
+        document.getElementById('sacola-vazia').style.display = 'block';
+      }
+      document.getElementById('sacola-count').innerText = sacolaCount;
+      document.getElementById('total-carrinho').innerText = `Total: R$${totalCarrinho}`;
+    }
+    function openModal() {
+      const modal = document.getElementById('myModal');
+      modal.style.display = 'block';
+    }
+    function closeModal() {
+      const modal = document.getElementById('myModal');
+      modal.style.display = 'none';
+    }
+    function openForm() {
+      document.getElementById('formContainer').style.display = 'block';
+    }
+    function closeForm() {
+      document.getElementById('formContainer').style.display = 'none';
+    }
+    function searchProduct() {
+      const input = document.getElementById('searchInput');
+      const filter = input.value.toUpperCase();
+      const produtos = document.getElementsByClassName('produto');
+      for (let i = 0; i < produtos.length; i++) {
+        const produto = produtos[i];
+        const nome = produto.getElementsByTagName('h3')[0];
+        if (nome.innerText.toUpperCase().indexOf(filter) > -1) {
+          produto.style.display = '';
+        } else {
+          produto.style.display = 'none';
+        }
+      }
+    }
+    const produtos = document.querySelectorAll('.produto');
+    produtos.forEach(produto => {
+      produto.addEventListener('mouseenter', function() {
+        this.style.backgroundColor = 'rgb(255, 0, 255)';
+      });
+      produto.addEventListener('mouseleave', function() {
+        this.style.backgroundColor = '';
+      });
+    });
+  </script>
+</body>
+</html>
